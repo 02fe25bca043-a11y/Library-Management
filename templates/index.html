@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            color: #243247;
+            margin: 0;
+            padding: 25px 15px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        h1 { color: #174a70; }
+
+        .panel {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 18px 0;
+            box-shadow: 0 2px 8px #00000010;
+        }
+
+        input, button {
+            box-sizing: border-box;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+
+        input { border: 1px solid #cbd5e1; }
+        button {
+            background: #176b87;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .book {
+            border-bottom: 1px solid #ddd;
+            padding: 12px 0;
+        }
+
+        .available { color: #16804a; }
+        .issued { color: #b45309; }
+        .message { font-weight: bold; color: #176b87; }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h1>📚 Library Management System</h1>
+    <p>Manage books, search the catalogue, issue and return books.</p>
+
+    {% if message %}
+        <p class="message">{{ message }}</p>
+    {% endif %}
+
+    <div class="panel">
+        <h2>Add a Book</h2>
+        <form method="POST">
+            <input type="hidden" name="action" value="add">
+            <input name="title" placeholder="Book title" required>
+            <input name="author" placeholder="Author name" required>
+            <button type="submit">Add Book</button>
+        </form>
+    </div>
+
+    <div class="panel">
+        <h2>Search Books</h2>
+        <form method="POST">
+            <input type="hidden" name="action" value="search">
+            <input name="search" placeholder="Enter title or author"
+                   value="{{ search }}">
+            <button type="submit">Search</button>
+            <a href="/">Show All Books</a>
+        </form>
+    </div>
+
+    <div class="panel">
+        <h2>Book Catalogue</h2>
+
+        {% for book in books %}
+        <div class="book">
+            <h3>{{ book.title }}</h3>
+            <p>Author: {{ book.author }}</p>
+            <p>Book ID: {{ book.id }}</p>
+
+            {% if book.available %}
+                <p class="available">Status: Available</p>
+                <form method="POST">
+                    <input type="hidden" name="action" value="issue">
+                    <input type="hidden" name="book_id"
+                           value="{{ book.id }}">
+                    <button type="submit">Issue Book</button>
+                </form>
+            {% else %}
+                <p class="issued">Status: Issued</p>
+                <form method="POST">
+                    <input type="hidden" name="action" value="return">
+                    <input type="hidden" name="book_id"
+                           value="{{ book.id }}">
+                    <button type="submit">Return Book</button>
+                </form>
+            {% endif %}
+        </div>
+        {% else %}
+            <p>No books found.</p>
+        {% endfor %}
+    </div>
+</div>
+</body>
+</html>
